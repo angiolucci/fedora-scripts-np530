@@ -44,4 +44,4 @@ if [ "$?" -eq "0" ]; then
 fi
 
 echo "DONE!"
-echo "Please, reboot to changes take affect"
+echo "Please, reboot to changes take effect"
