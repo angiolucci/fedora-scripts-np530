@@ -1,4 +1,4 @@
-FEDORA SCRIPTS FOR SAMSUNG SERIES 5 (NP530-U3C)
+Fedora scripts for Samsung series 5 (NP530U3C)
 ==============================================
 
  My personal collection of scripts to configure

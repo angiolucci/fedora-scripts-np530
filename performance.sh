@@ -31,6 +31,8 @@
 # Check also the wlan script for the S9!
 #
 
+#modified by angiolucci
+
 profiler=/sys/devices/platform/samsung/performance_level
 n_level="normal"
 s_level="silent"
