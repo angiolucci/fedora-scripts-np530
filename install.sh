@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Install script
+# author: angiolucci
+# Yes, I know. It's a mess. A lot to be improved :)
+
 USERNAME=`whoami`
 if [ $USERNAME = "root" ]; then
    echo "What is the default user? (not root!)"
