@@ -4,7 +4,7 @@
 # based on the original work of Jos Poortvliet [http://blog.jospoortvliet.com/]
 # -----------------------------------------------------------------------------
 
-# Original info from Jos Poortvliet:
+# Original text from Jos Poortvliet:
 
 # this simple script takes care of toggling the performance mode on Samsung series 9 (and possible other samsung) laptops.
 # it's written by Jos Poortvliet and licensed public domain cuz its brain-dead simple to write, even for him :D
