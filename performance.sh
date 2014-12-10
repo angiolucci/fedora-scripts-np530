@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# heavily modified by angiolucci, now support command line arguments! See the code for more info.
+# Text from original author:
+
+
 # this simple script takes care of toggling the performance mode on Samsung series 9 (and possible other samsung) laptops.
 # it's written by Jos Poortvliet and licensed public domain cuz its brain-dead simple to write, even for him :D
 #
@@ -30,8 +35,6 @@
 #
 # Check also the wlan script for the S9!
 #
-
-#modified by angiolucci
 
 profiler=/sys/devices/platform/samsung/performance_level
 n_level="normal"
