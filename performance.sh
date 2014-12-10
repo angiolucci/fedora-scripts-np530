@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# heavily modified by angiolucci, now support command line arguments! See the code for more info.
+# heavily modified by angiolucci, now it supports command line arguments! See the code for more info.
 # Text from original author:
 
 
