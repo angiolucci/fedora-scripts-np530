@@ -17,6 +17,7 @@ sudo cp -f performance.sh /usr/local/bin
 sudo cp -f rfkill.sh /usr/local/bin
 sudo cp -r performance.sh /usr/local/bin
 sudo cp -r rc.local /etc/rc.d
+sudo cp -f custom.sh /etc/profile.d
 
 if [ ! -s "/usr/bin/gcc" ]; then
     sudo yum install gcc -y
@@ -31,6 +32,7 @@ sudo chmod +x /usr/local/bin/set-backlight
 sudo chown root /usr/local/bin/set-backlight
 sudo chmod u+s /usr/local/bin/set-backlight
 sudo chmod +x /etc/rc.d/rc.local
+sudo chmod +x /etc/profile.d/custom.sh
 
 sudo cp /etc/sudoers ./sudoers.tmp
 
