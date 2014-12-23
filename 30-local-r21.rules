@@ -1,0 +1,8 @@
+# /etc/udev/rules.d/30-local.rules
+#
+# UDEV power suply rules
+# author: angiolucci
+# Thank you Arch Linux users, you guys (and girls) are amazing! =D
+
+SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="0", RUN+="/usr/local/bin/performance.sh silent"
+SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", RUN+="/usr/local/bin/performance.sh normal"

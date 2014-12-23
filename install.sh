@@ -4,6 +4,8 @@
 # author: angiolucci
 # Yes, I know. It's a mess. A lot to be improved :)
 
+RELEASE=`cat /etc/fedora-release | cut -d " " -f 3`
+
 USERNAME=`whoami`
 if [ $USERNAME = "root" ]; then
    echo "What is the default user? (not root!)"
@@ -12,7 +14,12 @@ fi
 
 SUDOCONFIG="$USERNAME ALL=(ALL) ALL, NOPASSWD: /usr/local/bin/performance.sh, /usr/local/bin/rfkill.sh"
 
-sudo cp -f 30-local.rules /etc/udev/rules.d
+if [ "$RELEASE" = "21" ]; then
+  sudo cp -f 30-local-r21.rules /etc/udev/rules.d/30-local.rules
+else
+  sudo cp -f 30-local-r20.rules /etc/udev/rules.d/30-local.rules
+fi
+
 sudo cp -f performance.sh /usr/local/bin
 sudo cp -f rfkill.sh /usr/local/bin
 sudo cp -r performance.sh /usr/local/bin
@@ -48,6 +55,8 @@ rm -fr /tmp/npconfig.tmp
 if [ "$?" -eq "0" ]; then
     sudo mv sudoers.tmp /etc/sudoers
 fi
+
+su -c 'yum localinstall --nogpgcheck http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm'
 
 echo "DONE!"
 echo "Please, reboot to changes take effect"
