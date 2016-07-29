@@ -38,29 +38,121 @@
 # Check also the wlan script for the S9!
 #
 
-profiler=/sys/devices/platform/samsung/performance_level
-n_level="normal"
-s_level="silent"
-level=`cat "$profiler"`
 
-if [ -n "$1" ]; then
-	if [ "$1" = "$s_level" -o "$1" = "$n_level" ]; then
-		echo "$1" > "$profiler"
-	else
-		if [ "$1" = "query" ]; then
-			if [ "$level" = "$n_level" ]; then
-				n_level="[$n_level]"
-			else
-				s_level="[$s_level]"
-			fi
-			echo "Current performance level: " "$s_level" "  " "$n_level"
-		fi
-	fi
-else
-	if  [ "$level" = "$s_level" ]; 	then
-		echo "$n_level" > "$profiler"
-	else
-		echo "$s_level" > "$profiler"
-	fi
+# Setup
+fan_profiler="/sys/devices/platform/samsung/performance_level"
+cpu_profiler="/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor"
+gpu_profiler="/sys/module/i915/parameters/powersave"
+
+if [ ! -f "$gpu_profiler" ]; then
+  gpu_profiler=/dev/null
 fi
-exit 0
+
+# main status, based on fan and cpu stats.
+#   0 - means that fan is in silent mode and cpu is in powersave mode
+#   1 - means that fan is in performance mode and cpu is in powersave mode
+#   2 - means that fan is in performance mode and cpu is in performance mode
+silent_level="0"
+normal_level="1"
+gaming_level="2"
+
+fan_string_normal="normal"
+fan_string_silent="silent"
+cpu_string_powersave="powersave"
+cpu_string_performance="performance"
+
+
+# Which state are we now?
+fan_level=$(cat "$fan_profiler")
+cpu_level=$(cat $cpu_profiler | head -n 1)
+
+
+# Reads fan/cpu states and sets a consistent main state
+current_power_state="$normal_level"
+case "$fan_level" in
+  "$fan_string_silent")
+    current_power_state="$silent_level"
+  ;;
+
+  "$fan_string_normal")
+    case "$cpu_level" in
+
+      "$cpu_string_performance")
+        current_power_state="$gaming_level"
+      ;;
+
+    esac
+  ;;
+esac
+
+
+# Parse the new power state based on user args.
+new_power_state="$current_power_state"
+case "$1" in
+  "query")
+    #echo $current_power_state
+  ;;
+
+  "silent" | "0")
+    new_power_state="$silent_level"
+  ;;
+
+  "normal" | "1")
+    new_power_state="$normal_level"
+  ;;
+
+  "gaming" | "2")
+    new_power_state="$gaming_level"
+  ;;
+
+  *)
+    if test -n "$1"
+    then
+      echo "Helping is coming soon =)"
+      exit 1
+    else
+      # Switch state 
+      case "$current_power_state" in
+        "0")
+          new_power_state=1
+        ;;
+
+        "1")
+          new_power_state=0
+        ;;
+
+        "2")
+          new_power_state=0
+        ;;
+
+        *)
+          new_power_state=1
+        ;;
+      esac
+    fi
+  ;;
+
+esac
+
+# Write the new power state (inconditionally, due to
+# consistency).
+case "$new_power_state" in
+  "$silent_level")
+    echo "$fan_string_silent" > "$fan_profiler"
+    echo "$cpu_string_powersave" | tee $cpu_profiler >/dev/null
+    echo 1 > "$gpu_profiler"
+  ;;
+
+  "$normal_level")
+      echo "$fan_string_normal" > "$fan_profiler"
+      echo "$cpu_string_powersave" | tee $cpu_profiler >/dev/null
+      echo 1 > "$gpu_profiler"
+  ;;
+
+  "$gaming_level")
+      echo "$fan_string_normal" > "$fan_profiler"
+      echo "$cpu_string_performance" | tee $cpu_profiler >/dev/null
+      echo 0 > "$gpu_profiler"
+  ;;
+esac
+echo "$new_power_state"

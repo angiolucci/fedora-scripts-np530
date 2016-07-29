@@ -21,24 +21,32 @@
 # Or, instead of making the hotkeys, import the khotkeys file I created instead:
 # https://dl.dropbox.com/u/29347181/NP900X3C.khotkeys
 #
-
 # the wlan and bt rfkill name changes sometimes, so some magic to find the right ones:
+#
+#
+# modified by Vinicius Angiolucci Reis (angiolucci@gmail.com)
+
+
 
 wlan="$(grep -l "wlan" /sys/devices/platform/samsung/rfkill/rfkill*/name)"
 if [[ -f "$wlan" ]]; then
-wlan_state="$(echo "$wlan" | sed 's/name$/state/')"
+  wlan_state="$(echo "$wlan" | sed 's/name$/state/')"
 fi
 
 bt="$(grep -l "bluetooth" /sys/devices/platform/samsung/rfkill/rfkill*/name)"
 if [[ -f "$bt" ]]; then
-bt_state="$(echo "$bt" | sed 's/name$/state/')"
+  bt_state="$(echo "$bt" | sed 's/name$/state/')"
 fi
 
 
-if cat $wlan_state | grep 1; 
-then echo 0 > $wlan_state;
-echo 0 > $bt_state;
-else echo 1 > $wlan_state;
-echo 1 > $bt_state;
-exit 0
+rfkill_curr_state="$(cat $wlan_state)"
+
+if [ "$rfkill_curr_state" == "1" ]; then 
+  rfkill_new_state=0
+else
+  rfkill_new_state=1
 fi
+
+echo $rfkill_new_state > $wlan_state
+echo $rfkill_new_state > $bt_state
+echo $rfkill_new_state
